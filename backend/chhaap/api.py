@@ -2,11 +2,11 @@ from uuid import UUID
 from fastapi import FastAPI,Depends,HTTPException,Request,Response,UploadFile
 from fastapi.responses import FileResponse
 from pydantic import BaseModel,Field
-from sqlalchemy import select
+from sqlalchemy import select,func
 
 from . import security
 from .db import shop_session
-from .models import RequestRecord,Source
+from .models import RequestRecord,Source,Job
 from .requests import CreateRequest,PatchRequest,AppendSource,owned,request_data,create_request,patch_request,append_source,invalidate
 from .media import store_image,media_path,MAX_BYTES
 from .catalogue import catalogue
@@ -120,3 +120,37 @@ def get_media(source_id:UUID,identity=Depends(security.get_identity)):
         source=owned(db,Source,source_id)
         if not source.media_path:raise HTTPException(404,"This source has no screenshot")
         return FileResponse(media_path(source.media_path),media_type='image/webp',headers={'Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff'})
+
+
+class ExtractRequest(BaseModel):
+    expected_revision:int=Field(ge=1)
+
+
+def job_data(job):return {'id':str(job.id),'status':job.status,'attempts':job.attempts,'error':job.error,'result':job.result}
+
+
+@app.post('/api/v1/requests/{record_id}/extract',status_code=202)
+def extract_request(record_id:UUID,body:ExtractRequest,identity=Depends(security.get_identity)):
+    from .requests import check_revision
+    with shop_session(identity['shop_id']) as db:
+        record=owned(db,RequestRecord,record_id,True);check_revision(record,body.expected_revision)
+        existing=db.scalar(select(Job).where(Job.request_id==record.id,Job.source_revision==record.revision,Job.status.in_(['queued','running'])))
+        if existing:return job_data(existing)
+        if not db.scalar(select(Source.id).where(Source.request_id==record.id).limit(1)):raise HTTPException(422,'Add a message or screenshot first')
+        pending=db.scalar(select(func.count()).select_from(Job).where(Job.status.in_(['queued','running'])))
+        if pending>=3:raise HTTPException(429,'Three requests are already processing for this shop. Wait for one to finish.')
+        job=Job(shop_id=identity['shop_id'],request_id=record.id,source_revision=record.revision);db.add(job);db.flush();return job_data(job)
+
+
+@app.get('/api/v1/jobs/{job_id}')
+def get_job(job_id:UUID,identity=Depends(security.get_identity)):
+    with shop_session(identity['shop_id']) as db:return job_data(owned(db,Job,job_id))
+
+
+@app.get('/api/v1/inference/status')
+def inference_status(identity=Depends(security.get_identity)):
+    import httpx
+    try:
+        response=httpx.get(settings.ollama_url+'/api/tags',timeout=2);response.raise_for_status();models=[m['name'] for m in response.json().get('models',[])]
+        return {'available':settings.ollama_model in models,'model':settings.ollama_model,'location':'Local model server','models':models}
+    except Exception:return {'available':False,'model':settings.ollama_model,'location':'Local model server','models':[]}
