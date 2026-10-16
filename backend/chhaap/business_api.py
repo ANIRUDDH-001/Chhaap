@@ -7,6 +7,7 @@ from sqlalchemy import select
 from .db import shop_session
 from .models import Customer, Order, Quote, RateVersion, Shop
 from .operations import RecordPayment, Transition, order_data, record_payment, reports, transition_order
+from .pagination import page, page_params
 from .quotes import (
     Issue,
     Preview,
@@ -73,14 +74,15 @@ def issue(body: Issue, identity=Depends(get_identity)):
 
 
 @router.get("/quotes")
-def quotes(identity=Depends(get_identity)):
+def quotes(params=Depends(page_params), identity=Depends(get_identity)):
     with shop_session(identity["shop_id"]) as db:
-        return {
-            "items": [
-                quote_data(db, q)
-                for q in db.scalars(select(Quote).order_by(Quote.created_at.desc()).limit(100))
-            ]
-        }
+        return page(
+            db,
+            Quote,
+            lambda row: quote_data(db, row),
+            params,
+            [Quote.number, Customer.name, Customer.business],
+        )
 
 
 @router.get("/quotes/{quote_id}")
@@ -110,14 +112,15 @@ def revise(quote_id: UUID, body: Revision, identity=Depends(get_identity)):
 
 
 @router.get("/orders")
-def orders(identity=Depends(get_identity)):
+def orders(params=Depends(page_params), identity=Depends(get_identity)):
     with shop_session(identity["shop_id"]) as db:
-        return {
-            "items": [
-                order_data(db, o)
-                for o in db.scalars(select(Order).order_by(Order.created_at.desc()).limit(100))
-            ]
-        }
+        return page(
+            db,
+            Order,
+            lambda row: order_data(db, row),
+            params,
+            [Order.number, Customer.name, Customer.business],
+        )
 
 
 @router.get("/orders/{order_id}")
@@ -139,13 +142,15 @@ def payment(order_id: UUID, body: RecordPayment, identity=Depends(get_identity))
 
 
 @router.get("/customers")
-def customers(identity=Depends(get_identity)):
+def customers(params=Depends(page_params), identity=Depends(get_identity)):
     with shop_session(identity["shop_id"]) as db:
-        return {
-            "items": [
-                customer_data(c) for c in db.scalars(select(Customer).order_by(Customer.name).limit(100))
-            ]
-        }
+        return page(
+            db,
+            Customer,
+            lambda row: customer_data(row),
+            params,
+            [Customer.name, Customer.business, Customer.phone],
+        )
 
 
 @router.get("/customers/{customer_id}")

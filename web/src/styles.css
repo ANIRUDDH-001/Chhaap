@@ -3285,3 +3285,40 @@ html[data-theme="dark"] .owner .avatar {
     font-size: 14px;
   }
 }
+
+.pagination-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.pagination-row small {
+  color: var(--muted);
+}
+.source-order-list {
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.6rem;
+}
+.source-order-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.source-order-list li span {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.merge-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  max-height: 240px;
+  overflow: auto;
+}

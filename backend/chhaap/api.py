@@ -11,7 +11,8 @@ from .catalogue import catalogue
 from .db import shop_session
 from .management_api import router as management_router
 from .media import MAX_BYTES, media_path, store_image
-from .models import Job, RequestRecord, Source
+from .models import Customer, Job, RequestRecord, Source
+from .pagination import page, page_params
 from .requests import (
     AppendSource,
     CreateRequest,
@@ -121,16 +122,15 @@ def logout(response: Response, identity=Depends(security.get_identity)):
 
 
 @app.get("/api/v1/requests")
-def requests(identity=Depends(security.get_identity)):
+def requests(params=Depends(page_params), identity=Depends(security.get_identity)):
     with shop_session(identity["shop_id"]) as db:
-        return {
-            "items": [
-                request_data(db, r, False)
-                for r in db.scalars(
-                    select(RequestRecord).order_by(RequestRecord.created_at.desc()).limit(100)
-                )
-            ]
-        }
+        return page(
+            db,
+            RequestRecord,
+            lambda row: request_data(db, row, False),
+            params,
+            [RequestRecord.title, Customer.name, Customer.business],
+        )
 
 
 @app.get("/api/v1/catalogue")
@@ -160,6 +160,29 @@ def update_request(record_id: UUID, body: PatchRequest, identity=Depends(securit
 def add_source(record_id: UUID, body: AppendSource, identity=Depends(security.get_identity)):
     with shop_session(identity["shop_id"]) as db:
         return append_source(db, owned(db, RequestRecord, record_id, True), body)
+
+
+class SourceOrder(BaseModel):
+    expected_revision: int = Field(ge=1)
+    source_ids: list[UUID] = Field(max_length=100)
+
+
+@app.patch("/api/v1/requests/{record_id}/source-order")
+def reorder_sources(record_id: UUID, body: SourceOrder, identity=Depends(security.get_identity)):
+    from .requests import check_revision
+
+    with shop_session(identity["shop_id"]) as db:
+        record = owned(db, RequestRecord, record_id, True)
+        check_revision(record, body.expected_revision)
+        sources = list(db.scalars(select(Source).where(Source.request_id == record_id)))
+        if len(body.source_ids) != len(sources) or set(body.source_ids) != {s.id for s in sources}:
+            raise HTTPException(422, "Include each source from this request exactly once")
+        positions = {ident: i for i, ident in enumerate(body.source_ids)}
+        for source in sources:
+            source.position = positions[source.id]
+        invalidate(record)
+        db.flush()
+        return request_data(db, record)
 
 
 @app.post("/api/v1/requests/{record_id}/attachments", status_code=201)

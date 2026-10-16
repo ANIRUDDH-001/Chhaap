@@ -17,7 +17,7 @@ def cleanup_shop(shop_id):
     with shop_session(shop_id) as db:
         shop = db.get(Shop, shop_id)
         cutoff = now() - timedelta(days=shop.settings.get("retention_days", 30))
-        sources = list(db.scalars(select(Source).where(Source.created_at < cutoff).with_for_update()))
+        sources = list(db.scalars(select(Source).where(Source.created_at < cutoff)))
         affected = {s.request_id for s in sources}
         for record_id in sorted(affected):
             record = db.scalar(select(RequestRecord).where(RequestRecord.id == record_id).with_for_update())

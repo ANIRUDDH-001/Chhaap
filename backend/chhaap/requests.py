@@ -27,6 +27,7 @@ def check_revision(record, expected):
 def customer_data(customer):
     return {
         "id": str(customer.id),
+        "revision": customer.revision,
         "name": customer.name,
         "business": customer.business,
         "phone": customer.phone,
@@ -46,7 +47,11 @@ def source_data(source):
 
 
 def request_data(db, record, detail=True):
-    customer = db.get(Customer, record.customer_id) if record.customer_id else None
+    customer = (
+        (db.info.get("page_customers", {}).get(record.customer_id) or db.get(Customer, record.customer_id))
+        if record.customer_id
+        else None
+    )
     result = {
         "id": str(record.id),
         "title": record.title,

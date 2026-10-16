@@ -21,6 +21,7 @@ import type {
   Snapshot,
 } from "../lib/types";
 import { blankLine } from "../lib/types";
+import { RateDetails } from "../components/RateDetails";
 import { money, day, label } from "../lib/format";
 import { useSession } from "../lib/session";
 import {
@@ -178,10 +179,23 @@ export function Rates() {
               </label>
             </div>
             <div className="compact-rates">
-              {draft.flyers.tiers.map((t) => (
-                <span key={t[0]}>
-                  {t[0]}+ flyers <b>{money(t[1], true)} / piece</b>
-                </span>
+              {draft.flyers.tiers.map((t, index) => (
+                <label className="field" key={t[0]}>
+                  {t[0]}+ flyers (₹ / piece)
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={t[1] / 100}
+                    onChange={(e) =>
+                      update((config) => {
+                        config.flyers.tiers[index][1] = Math.round(
+                          Number(e.target.value) * 100,
+                        );
+                      })
+                    }
+                  />
+                </label>
               ))}
             </div>
           </section>
@@ -285,6 +299,7 @@ export function Rates() {
               Chhaap creates quotations.
             </p>
           </section>
+          <RateDetails draft={draft} update={update} />
         </div>
         <aside>
           <section className="settings-panel rate-preview">

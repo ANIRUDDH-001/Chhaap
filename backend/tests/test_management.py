@@ -60,3 +60,18 @@ def test_duplicate_customer_merge_stays_inside_shop(client_factory):
         ).status_code
         == 404
     )
+
+
+def test_customer_edits_detect_stale_views_and_preserve_issued_identity(client_factory):
+    c, req = reviewed_request(client_factory)
+    q = issue(c, req)
+    customer = c.get("/api/v1/customers/" + req["customer"]["id"]).json()
+    body = {
+        "name": "Updated Customer",
+        "business": "New Studio",
+        "expected_revision": customer.get("revision", 1),
+    }
+    changed = c.patch("/api/v1/customers/" + customer["id"], json=body)
+    assert changed.status_code == 200, changed.text
+    assert c.patch("/api/v1/customers/" + customer["id"], json=body).status_code == 409
+    assert c.get("/api/v1/quotes/" + q["id"]).json()["snapshot"]["customer"]["name"] == customer["name"]

@@ -42,6 +42,7 @@ import {
 } from "../components/ui";
 import { QuotePaper } from "../components/QuotePaper";
 import { QuoteAdjustments } from "../components/QuoteAdjustments";
+import { SourceOrder } from "../components/SourceOrder";
 
 export function Workbench({ onNew }: { onNew: () => void }) {
   const { id } = useParams();
@@ -419,6 +420,24 @@ export function Workbench({ onNew }: { onNew: () => void }) {
             )}
           </div>
           <div className="source-actions">
+            <SourceOrder
+              record={current}
+              onSave={async (ids) => {
+                const saved = await save();
+                if (!saved)
+                  throw new Error(
+                    "Save the draft before changing source order.",
+                  );
+                const updated = await patch<RequestRecord>(
+                  "/requests/" + id + "/source-order",
+                  { expected_revision: saved.revision, source_ids: ids },
+                );
+                setDraft(updated);
+                setDirty(false);
+                query.setQueryData(["request", id], updated);
+                notify("Source order saved. Review the specifications again.");
+              }}
+            />
             <button
               className="button small"
               onClick={() => setAppendOpen(true)}

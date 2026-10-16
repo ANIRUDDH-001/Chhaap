@@ -1,3 +1,4 @@
+import { useRecords, MoreRecords } from "../lib/records";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
@@ -5,6 +6,7 @@ import { ArrowRight, Plus, RotateCcw, Search } from "lucide-react";
 import { api, post, errorMessage } from "../lib/api";
 import type { Customer, Quote, Order, RequestRecord } from "../lib/types";
 import { initials, money, day, label } from "../lib/format";
+import { CustomerActions } from "../components/CustomerActions";
 import {
   Empty,
   ErrorNote,
@@ -29,10 +31,7 @@ export function Customers() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const customers = useQuery({
-    queryKey: ["customers"],
-    queryFn: () => api<{ items: Customer[] }>("/customers"),
-  });
+  const customers = useRecords<Customer>("customers", search);
   const detail = useQuery({
     queryKey: ["customer", openId],
     queryFn: () => api<CustomerDetail>("/customers/" + openId),
@@ -55,6 +54,7 @@ export function Customers() {
           Add customer
         </button>
       </PageHeading>
+      <MoreRecords list={customers} />
       <div className="list-toolbar">
         <div className="search-field">
           <Search size={16} />
@@ -154,6 +154,10 @@ export function Customers() {
                 </button>
               </div>
               {error && <ErrorNote message={error} />}
+              <CustomerActions
+                customer={detail.data}
+                onMerged={() => setOpenId(null)}
+              />
               <h3 className="subheading">Quotations</h3>
               {detail.data.quotes.length ? (
                 <div className="record-table-wrap">

@@ -16,6 +16,7 @@ export type LineSpec = {
 };
 export type Customer = {
   id: string;
+  revision?: number;
   name: string;
   business: string;
   phone: string;

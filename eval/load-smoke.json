@@ -1,0 +1,1013 @@
+{
+  "scope": "Local bounded smoke: 1,000 synthetic requests, quotes and orders; 8 concurrent clients; inference excluded. Not the 100k-record/20-client design target.",
+  "requests": 200,
+  "concurrency": 8,
+  "failures": 0,
+  "p50_ms": 31.085,
+  "p95_ms": 91.19,
+  "elapsed_seconds": 16.66,
+  "requests_per_second": 12.0,
+  "shop_id": "672fddbb-cd37-4af0-bdef-c0680c0d4de4",
+  "results": [
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 51.15
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 117.02
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 15330.72
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 15307.43
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 108.3
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 78.12
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 15357.09
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 91.19
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 64.87
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 15325.12
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 15409.58
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 15379.23
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 15387.14
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 79.86
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 15.84
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 29.24
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 50.36
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 17.04
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 27.41
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 39.17
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 12.63
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 32.02
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 59.67
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 18.01
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 34.86
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 69.24
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 17.6
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 37.98
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 47.09
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 12.62
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 26.89
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 38.94
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 14.87
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 39.52
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 52.22
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 18.12
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 31.07
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 51.97
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 17.17
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 31.71
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 46.08
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 12.95
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 28.29
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 40.72
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 17.88
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 30.27
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 44.62
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 14.22
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 29.14
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 46.42
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 16.36
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 32.96
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 59.26
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 18.85
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 38.52
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 58.07
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 15.76
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 27.88
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 50.37
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 14.91
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 39.38
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 53.06
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 14.74
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 36.96
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 58.69
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 16.56
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 31.1
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 46.41
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 17.3
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 37.56
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 54.14
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 16.46
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 30.42
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 51.66
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 15.3
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 116.57
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 47.27
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 13.15
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 25.47
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 43.89
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 16.0
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 32.3
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 43.88
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 13.69
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 29.31
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 43.15
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 15.51
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 25.37
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 46.7
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 14.36
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 31.2
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 46.66
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 15.2
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 28.18
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 45.66
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 15.12
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 25.11
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 47.69
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 15.74
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 27.51
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 43.12
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 13.58
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 28.73
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 45.63
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 14.22
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 26.82
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 44.87
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 14.57
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 27.73
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 43.85
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 14.69
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 31.01
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 45.28
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 13.98
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 27.6
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 33.17
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 11.62
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 23.13
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 33.25
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 11.04
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 23.12
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 32.15
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 11.5
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 22.76
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 34.61
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 12.13
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 23.79
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 34.75
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 12.0
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 24.55
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 34.54
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 11.53
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 28.32
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 33.3
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 11.72
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 23.32
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 38.18
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 13.68
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 26.71
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 66.81
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 19.45
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 37.77
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 48.87
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 13.2
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 32.39
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 47.38
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 13.24
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 30.78
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 48.68
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 14.96
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 35.31
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 55.83
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 15.11
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 34.84
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 46.68
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 12.33
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 31.75
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 46.88
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 15.89
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 36.6
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 51.46
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 15.74
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 37.88
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 52.75
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 15.03
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 33.18
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 44.82
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 14.35
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 30.88
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 50.15
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 14.1
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 31.76
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 46.7
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 13.38
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 24.34
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 36.33
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 12.48
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 31.89
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 46.98
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 12.33
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 25.44
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 35.62
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 15.4
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 25.06
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 37.64
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 11.65
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 25.12
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 36.26
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 12.83
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 25.21
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 40.34
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 12.7
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 26.5
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 39.16
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 12.35
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 26.97
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 39.38
+    },
+    {
+      "route": "/quotes/preview",
+      "status": 200,
+      "ms": 11.79
+    },
+    {
+      "route": "/requests",
+      "status": 200,
+      "ms": 28.53
+    },
+    {
+      "route": "/reports",
+      "status": 200,
+      "ms": 40.22
+    }
+  ]
+}

@@ -9,7 +9,7 @@ from .models import Customer, Order, Quote, RateVersion, RequestRecord, Shop
 from .operations import order_data
 from .pricing import price_quote
 from .quotes import audit, quote_data
-from .requests import customer_data, owned, request_data
+from .requests import check_revision, customer_data, owned, request_data
 from .schemas import LineSpec
 from .security import get_identity
 
@@ -39,11 +39,16 @@ def add_customer(body: CustomerInput, identity=Depends(get_identity)):
         return customer_data(customer)
 
 
+class CustomerEdit(CustomerInput):
+    expected_revision: int = Field(ge=1)
+
+
 @router.patch("/customers/{customer_id}")
-def edit_customer(customer_id: UUID, body: CustomerInput, identity=Depends(get_identity)):
+def edit_customer(customer_id: UUID, body: CustomerEdit, identity=Depends(get_identity)):
     with shop_session(identity["shop_id"]) as db:
         customer = owned(db, Customer, customer_id, True)
-        for k, v in body.model_dump().items():
+        check_revision(customer, body.expected_revision)
+        for k, v in body.model_dump(exclude={"expected_revision"}).items():
             setattr(customer, k, v)
         customer.revision += 1
         db.flush()

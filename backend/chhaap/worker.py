@@ -27,6 +27,11 @@ def claim_job(worker):
 
 def complete_job(claim, result):
     with shop_session(claim["shop_id"]) as db:
+        request_id = db.scalar(select(Job.request_id).where(Job.id == claim["id"]))
+        if not request_id:
+            return False
+        # All paths touching both resources lock the request before its job.
+        record = db.scalar(select(RequestRecord).where(RequestRecord.id == request_id).with_for_update())
         job = db.scalar(select(Job).where(Job.id == claim["id"]).with_for_update())
         if (
             not job
@@ -35,7 +40,6 @@ def complete_job(claim, result):
             or job.lease_until <= now()
         ):
             return False
-        record = db.scalar(select(RequestRecord).where(RequestRecord.id == job.request_id).with_for_update())
         if not record or record.revision != job.source_revision:
             job.status = "stale"
             job.error = (

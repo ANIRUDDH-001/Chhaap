@@ -1,3 +1,4 @@
+import { useRecords, MoreRecords } from "../lib/records";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
@@ -37,10 +38,7 @@ export function Quotes() {
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const rows = useQuery({
-    queryKey: ["quotes"],
-    queryFn: () => api<{ items: Quote[] }>("/quotes"),
-  });
+  const rows = useRecords<Quote>("quotes", search, filter);
   const selected = useQuery({
     queryKey: ["quote", openId],
     queryFn: () => api<Quote>("/quotes/" + openId),
@@ -92,6 +90,7 @@ export function Quotes() {
           Open quote desk
         </Link>
       </PageHeading>
+      <MoreRecords list={rows} />
       <div className="list-toolbar">
         <div className="search-field">
           <Search size={16} />

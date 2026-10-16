@@ -1,3 +1,4 @@
+import { useRecords, MoreRecords } from "../lib/records";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import {
@@ -224,10 +225,7 @@ export function Today({ onNew }: { onNew: () => void }) {
 }
 
 export function RequestList({ onNew }: { onNew: () => void }) {
-  const requests = useQuery({
-    queryKey: ["requests"],
-    queryFn: () => api<{ items: RequestRecord[] }>("/requests"),
-  });
+  const requests = useRecords<RequestRecord>("requests");
   return (
     <>
       <PageHeading
@@ -239,11 +237,12 @@ export function RequestList({ onNew }: { onNew: () => void }) {
           New request
         </button>
       </PageHeading>
+      <MoreRecords list={requests} />
       {requests.isPending ? (
         <Loading />
       ) : requests.isError ? (
         <ErrorNote message={requests.error.message} />
-      ) : requests.data.items.length ? (
+      ) : requests.data?.items.length ? (
         <div className="record-table-wrap">
           <table className="record-table">
             <thead>
@@ -256,7 +255,7 @@ export function RequestList({ onNew }: { onNew: () => void }) {
               </tr>
             </thead>
             <tbody>
-              {requests.data.items.map((r) => (
+              {requests.data?.items.map((r) => (
                 <tr key={r.id}>
                   <td>
                     <strong>{r.customer?.name}</strong>

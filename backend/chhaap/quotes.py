@@ -39,9 +39,17 @@ class QuoteResponse(BaseModel):
 
 
 def quote_data(db, quote):
-    customer = db.get(Customer, quote.customer_id) if quote.customer_id else None
+    customer = (
+        (db.info.get("page_customers", {}).get(quote.customer_id) or db.get(Customer, quote.customer_id))
+        if quote.customer_id
+        else None
+    )
     status = "expired" if quote.status == "issued" and quote.expires_at <= now() else quote.status
-    order = db.scalar(select(Order.id).where(Order.quote_id == quote.id))
+    order = (
+        db.info["page_quote_orders"].get(quote.id)
+        if "page_quote_orders" in db.info
+        else db.scalar(select(Order.id).where(Order.quote_id == quote.id))
+    )
     return {
         "id": str(quote.id),
         "request_id": str(quote.request_id) if quote.request_id else None,

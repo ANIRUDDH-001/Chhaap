@@ -1,8 +1,6 @@
-from collections import Counter
-
 from fastapi import HTTPException
 from pydantic import BaseModel, Field
-from sqlalchemy import select
+from sqlalchemy import BigInteger, cast, func, select
 
 from .models import AuditEvent, Customer, Order, Payment, Quote, RequestRecord, now
 from .quotes import audit
@@ -24,11 +22,21 @@ def payment_data(p):
 
 
 def order_data(db, order, detail=False):
-    payments = list(
-        db.scalars(select(Payment).where(Payment.order_id == order.id).order_by(Payment.created_at))
+    payments = (
+        list(db.scalars(select(Payment).where(Payment.order_id == order.id).order_by(Payment.created_at)))
+        if detail or "page_payments" not in db.info
+        else []
     )
-    received = sum(p.amount for p in payments)
-    customer = db.get(Customer, order.customer_id) if order.customer_id else None
+    received = (
+        db.info["page_payments"].get(order.id, 0)
+        if not detail and "page_payments" in db.info
+        else sum(p.amount for p in payments)
+    )
+    customer = (
+        (db.info.get("page_customers", {}).get(order.customer_id) or db.get(Customer, order.customer_id))
+        if order.customer_id
+        else None
+    )
     result = {
         "id": str(order.id),
         "number": order.number,
@@ -127,25 +135,38 @@ def record_payment(db, order, body):
 
 
 def reports(db):
-    quotes = list(db.scalars(select(Quote)))
-    orders = list(db.scalars(select(Order)))
-    payments = list(db.scalars(select(Payment)))
-    received = sum(p.amount for p in payments)
-    order_total = sum(o.total for o in orders if o.stage != "cancelled")
+    # Aggregate in PostgreSQL; never load the whole ledger into application memory.
+    def count(model):
+        return db.scalar(select(func.count()).select_from(model))
+
+    paid = (
+        select(Payment.order_id.label("order_id"), func.sum(Payment.amount).label("received"))
+        .group_by(Payment.order_id)
+        .subquery()
+    )
+    outstanding = db.scalar(
+        select(func.coalesce(func.sum(func.greatest(0, Order.total - func.coalesce(paid.c.received, 0))), 0))
+        .select_from(Order)
+        .outerjoin(paid, Order.id == paid.c.order_id)
+        .where(Order.stage != "cancelled")
+    )
+    quote_value = db.scalar(
+        select(func.coalesce(func.sum(cast(Quote.snapshot["total"].astext, BigInteger)), 0)).where(
+            Quote.status.not_in(["superseded", "cancelled", "declined"])
+        )
+    )
     return {
-        "issued_quote_value": sum(
-            q.snapshot["total"] for q in quotes if q.status not in {"superseded", "cancelled", "declined"}
+        "issued_quote_value": quote_value,
+        "issued_quotes": db.scalar(
+            select(func.count()).select_from(Quote).where(Quote.status.not_in(["superseded", "cancelled"]))
         ),
-        "issued_quotes": len([q for q in quotes if q.status not in {"superseded", "cancelled"}]),
-        "accepted_order_value": order_total,
-        "received": received,
-        "outstanding": sum(
-            max(0, o.total - sum(p.amount for p in payments if p.order_id == o.id))
-            for o in orders
-            if o.stage != "cancelled"
+        "accepted_order_value": db.scalar(
+            select(func.coalesce(func.sum(Order.total), 0)).where(Order.stage != "cancelled")
         ),
-        "stages": dict(Counter(o.stage for o in orders)),
-        "requests": db.query(RequestRecord).count(),
-        "customers": db.query(Customer).count(),
-        "orders": len(orders),
+        "received": db.scalar(select(func.coalesce(func.sum(Payment.amount), 0))),
+        "outstanding": outstanding,
+        "stages": dict(db.execute(select(Order.stage, func.count()).group_by(Order.stage)).all()),
+        "requests": count(RequestRecord),
+        "customers": count(Customer),
+        "orders": count(Order),
     }

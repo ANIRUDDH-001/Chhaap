@@ -1,3 +1,4 @@
+import { useRecords, MoreRecords } from "../lib/records";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router-dom";
@@ -46,10 +47,7 @@ export function Jobs() {
   const [method, setMethod] = useState("Cash");
   const [reference, setReference] = useState("");
   const [paymentKey, setPaymentKey] = useState(key);
-  const orders = useQuery({
-    queryKey: ["orders"],
-    queryFn: () => api<{ items: Order[] }>("/orders"),
-  });
+  const orders = useRecords<Order>("orders", search);
   const detail = useQuery({
     queryKey: ["order", openId],
     queryFn: () => api<Order>("/orders/" + openId),
@@ -95,6 +93,7 @@ export function Jobs() {
           {closed ? "Show active board" : "Delivered & cancelled"}
         </button>
       </PageHeading>
+      <MoreRecords list={orders} />
       <div className="list-toolbar">
         <div className="search-field">
           <Search size={16} />
