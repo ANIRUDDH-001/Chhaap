@@ -62,15 +62,15 @@ def price_quote(lines: list[LineSpec], rates: dict, adjustments: Adjustments | N
             product = rates[spec.product]
             title = product["title"]
             tier = max((t for t in product["tiers"] if t[0] <= spec.quantity), key=lambda t: t[0])
-            multiplier = Decimal(rates["print_multipliers"][spec.sides]) * Decimal(
-                rates["print_multipliers"][spec.colour]
+            multiplier = Decimal(str(rates["print_multipliers"][spec.sides])) * Decimal(
+                str(rates["print_multipliers"][spec.colour])
             )
             if spec.product == "cards" and spec.size != "standard":
                 warnings.append(f"Item {index}: unsupported card size; use a custom job with an owner price")
             if spec.product == "flyers":
                 if spec.size not in product["sizes"]:
                     warnings.append(f"Item {index}: select a supported flyer size")
-                multiplier *= Decimal(product["sizes"].get(spec.size, "1"))
+                multiplier *= Decimal(str(product["sizes"].get(spec.size, "1")))
             add(
                 "Printing",
                 Decimal(tier[1]) * spec.quantity * multiplier,

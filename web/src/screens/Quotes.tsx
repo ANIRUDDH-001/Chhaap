@@ -14,6 +14,7 @@ import {
 import { api, post, errorMessage } from "../lib/api";
 import type { Quote } from "../lib/types";
 import { money, day, label } from "../lib/format";
+import { quotationText } from "../lib/print-spec";
 import { useSession } from "../lib/session";
 import {
   Empty,
@@ -251,7 +252,7 @@ export function Quotes() {
                   onClick={async () => {
                     try {
                       await navigator.clipboard.writeText(
-                        `${session.shop.name}\nQuotation ${selected.data!.number} v${selected.data!.version}\n${selected.data!.snapshot.lines.map((l) => `${l.spec.quantity} ${l.title}`).join("\n")}\nTotal: ${money(selected.data!.snapshot.total)}\nRequested deposit: ${money(selected.data!.snapshot.deposit)}\nDelivery: ${day(selected.data!.delivery_date)}\nValid until: ${day(selected.data!.expires_at)}\n${selected.data!.terms}`,
+                        quotationText(selected.data!, session.shop.name),
                       );
                       notify("Quotation copied. Nothing was sent.");
                     } catch {

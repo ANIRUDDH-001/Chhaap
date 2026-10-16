@@ -13,6 +13,7 @@ import {
 import { api, post, key, errorMessage } from "../lib/api";
 import type { Order } from "../lib/types";
 import { day, label, money } from "../lib/format";
+import { describePrintSpec } from "../lib/print-spec";
 import {
   Empty,
   ErrorNote,
@@ -47,7 +48,11 @@ export function Jobs() {
   const [method, setMethod] = useState("Cash");
   const [reference, setReference] = useState("");
   const [paymentKey, setPaymentKey] = useState(key);
-  const orders = useRecords<Order>("orders", search);
+  const orders = useRecords<Order>(
+    "orders",
+    search,
+    closed ? "closed" : "active",
+  );
   const detail = useQuery({
     queryKey: ["order", openId],
     queryFn: () => api<Order>("/orders/" + openId),
@@ -248,13 +253,16 @@ export function Jobs() {
                       <strong>
                         {l.spec.quantity} {l.title.toLowerCase()}
                       </strong>
-                      <p>
-                        {l.spec.paper ? l.spec.paper + " GSM · " : ""}
-                        {l.spec.size} · {l.spec.finish} finishing
-                      </p>
+                      <p>{describePrintSpec(l.spec)}</p>
                     </div>
                   ))}
                 </div>
+                <Link
+                  className="text-button"
+                  to={"/quotes?open=" + detail.data.quote_id}
+                >
+                  Open accepted quotation <ArrowRight size={14} />
+                </Link>
                 <div className="job-metrics">
                   <div>
                     <span>Order total</span>
@@ -300,6 +308,7 @@ export function Jobs() {
                             {p.method} · {day(p.created_at)}
                             {p.reference ? " · " + p.reference : ""}
                           </small>
+                          {p.note && <small>{p.note}</small>}
                         </div>
                         <b>{money(p.amount)}</b>
                       </div>
@@ -320,6 +329,9 @@ export function Jobs() {
                       <span>
                         {label(e.action)}
                         <small>{day(e.created_at)}</small>
+                        {typeof e.detail.note === "string" && e.detail.note && (
+                          <small>{e.detail.note}</small>
+                        )}
                       </span>
                     </div>
                   ))}

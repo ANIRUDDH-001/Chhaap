@@ -29,6 +29,9 @@ import { SessionContext } from "./lib/session";
 import { initials } from "./lib/format";
 import { Loading, ErrorNote, Modal } from "./components/ui";
 import { NewRequestForm } from "./components/NewRequestForm";
+const PublicPreview = lazy(() =>
+  import("./screens/PublicPreview").then((m) => ({ default: m.PublicPreview })),
+);
 const Workbench = lazy(() =>
   import("./screens/Workbench").then((m) => ({ default: m.Workbench })),
 );
@@ -93,13 +96,14 @@ function Start() {
 }
 
 export function App() {
+  const location = useLocation();
   const session = useQuery({
     queryKey: ["session"],
     queryFn: openSession,
+    enabled: location.pathname !== "/preview",
     retry: false,
   });
   const navigate = useNavigate();
-  const location = useLocation();
   const query = useQueryClient();
   const [newOpen, setNewOpen] = useState(false);
   const [theme, setTheme] = useState(
@@ -119,7 +123,23 @@ export function App() {
     addEventListener("keydown", handler);
     return () => removeEventListener("keydown", handler);
   }, [navigate]);
+  if (location.pathname === "/preview")
+    return (
+      <Suspense fallback={<Loading />}>
+        <PublicPreview />
+      </Suspense>
+    );
   if (session.isPending) return <Loading />;
+  if (
+    session.isError &&
+    session.error instanceof ApiError &&
+    session.error.status === 404
+  )
+    return (
+      <Suspense fallback={<Loading />}>
+        <PublicPreview />
+      </Suspense>
+    );
   if (session.isError)
     return (
       <div className="startup-error">

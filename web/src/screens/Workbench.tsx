@@ -25,7 +25,7 @@ import {
   Trash2,
   TriangleAlert,
 } from "lucide-react";
-import { api, post, patch, key, errorMessage } from "../lib/api";
+import { api, post, patch, key, errorMessage, ApiError } from "../lib/api";
 import { issueBlockers, reconcileSavedDraft, pendingDraft } from "../lib/draft";
 import { initials } from "../lib/format";
 import { blankLine } from "../lib/types";
@@ -70,6 +70,9 @@ export function Workbench({ onNew }: { onNew: () => void }) {
   const [appendOpen, setAppendOpen] = useState(false);
   const [appendText, setAppendText] = useState("");
   const [issueOpen, setIssueOpen] = useState(false);
+  const [conflictDraft, setConflictDraft] = useState<RequestRecord | null>(
+    null,
+  );
   const [savedLabel, setSavedLabel] = useState("Saved to your shop");
   const [highlight, setHighlight] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
@@ -187,6 +190,13 @@ export function Workbench({ onNew }: { onNew: () => void }) {
     } catch (e) {
       setError(errorMessage(e));
       setSavedLabel("Not saved — your edits are still here");
+      if (e instanceof ApiError && e.status === 409) {
+        try {
+          setConflictDraft(await api<RequestRecord>("/requests/" + id));
+        } catch {
+          /* Preserve the local draft if refreshing also fails. */
+        }
+      }
       return null;
     } finally {
       saveInFlight.current = false;
@@ -194,13 +204,49 @@ export function Workbench({ onNew }: { onNew: () => void }) {
     }
   }
   useEffect(() => {
-    if (!dirty || saving || !current || current.lines.some((l) => !l.quantity))
+    if (
+      !dirty ||
+      saving ||
+      busy ||
+      error ||
+      conflictDraft ||
+      !current ||
+      current.lines.some((l) => !l.quantity)
+    )
       return;
     const timer = setTimeout(() => {
       void save();
     }, 1400);
     return () => clearTimeout(timer);
-  }, [draft, dirty, saving]); // A newer edit cancels the pending save.
+  }, [draft, dirty, saving, busy, error, conflictDraft]); // A newer edit cancels the pending save.
+  function applySourceChange(sent: RequestRecord, updated: RequestRecord) {
+    const latest = latestDraft.current || sent;
+    const changed =
+      JSON.stringify(pendingDraft(latest)) !==
+      JSON.stringify(pendingDraft(sent));
+    const next = changed
+      ? {
+          ...updated,
+          ...pendingDraft(latest),
+          revision: updated.revision,
+          lines: latest.lines.map((line) => ({ ...line, confirmed: false })),
+          delivery_confirmed: false,
+        }
+      : updated;
+    latestDraft.current = next;
+    setDraft(next);
+    setDirty(changed);
+    setSavedLabel(changed ? "New edits waiting to save" : "Saved to your shop");
+    try {
+      if (changed)
+        sessionStorage.setItem(recoveryKey, JSON.stringify(pendingDraft(next)));
+      else sessionStorage.removeItem(recoveryKey);
+    } catch {
+      /* Server autosave remains available. */
+    }
+    query.setQueryData(["request", id], updated);
+    query.invalidateQueries({ queryKey: ["requests"] });
+  }
   async function action(name: string, work: () => Promise<void>) {
     setBusy(name);
     setError("");
@@ -233,9 +279,7 @@ export function Workbench({ onNew }: { onNew: () => void }) {
         "/requests/" + id + "/attachments",
         { method: "POST", body: form },
       );
-      setDraft(updated);
-      setDirty(false);
-      query.setQueryData(["request", id], updated);
+      applySourceChange(saved, updated);
       setSourceTab("screenshots");
       notify("Screenshot saved privately. Extract it or review it yourself.");
     });
@@ -290,9 +334,11 @@ export function Workbench({ onNew }: { onNew: () => void }) {
         <ErrorNote
           message={error}
           retry={() => {
-            sessionStorage.removeItem(recoveryKey);
-            setDirty(false);
-            record.refetch();
+            if (dirty) void save();
+            else {
+              setError("");
+              void record.refetch();
+            }
           }}
         />
       )}
@@ -432,9 +478,7 @@ export function Workbench({ onNew }: { onNew: () => void }) {
                   "/requests/" + id + "/source-order",
                   { expected_revision: saved.revision, source_ids: ids },
                 );
-                setDraft(updated);
-                setDirty(false);
-                query.setQueryData(["request", id], updated);
+                applySourceChange(saved, updated);
                 notify("Source order saved. Review the specifications again.");
               }}
             />
@@ -1022,9 +1066,7 @@ export function Workbench({ onNew }: { onNew: () => void }) {
                   sender: current.customer?.name || "Customer",
                 },
               );
-              setDraft(updated);
-              setDirty(false);
-              query.setQueryData(["request", id], updated);
+              applySourceChange(saved, updated);
               setAppendOpen(false);
               setAppendText("");
               notify("Messages added. Recheck the job details before quoting.");
@@ -1047,6 +1089,80 @@ export function Workbench({ onNew }: { onNew: () => void }) {
             </button>
           </div>
         </form>
+      </Modal>
+      <Modal
+        open={!!conflictDraft}
+        onOpenChange={(open) => {
+          if (!open) setConflictDraft(null);
+        }}
+        title="This request changed in another view."
+        description="Your unsaved edits are kept here. Compare the saved details before choosing which version to review."
+      >
+        <div className="field-pair">
+          {[
+            ["Your unsaved edits", current],
+            ["Latest saved details", conflictDraft],
+          ].map(([title, value]) => {
+            const draft = value as RequestRecord | null;
+            return (
+              <section key={String(title)}>
+                <h3>{String(title)}</h3>
+                <p>{draft?.title}</p>
+                {draft?.lines.map((line, i) => (
+                  <p key={i}>
+                    {line.quantity} {line.product} ·{" "}
+                    {line.paper ? line.paper + " GSM" : "Paper not set"}
+                  </p>
+                ))}
+                <p>Delivery: {draft?.delivery_date || "Not confirmed"}</p>
+              </section>
+            );
+          })}
+        </div>
+        <div className="dialog-actions">
+          <button
+            className="button"
+            onClick={() => {
+              if (!conflictDraft) return;
+              setDraft(conflictDraft);
+              latestDraft.current = conflictDraft;
+              setDirty(false);
+              setError("");
+              sessionStorage.removeItem(recoveryKey);
+              query.setQueryData(["request", id], conflictDraft);
+              setConflictDraft(null);
+            }}
+          >
+            Discard my edits and use saved details
+          </button>
+          <button
+            className="button primary"
+            onClick={() => {
+              if (!conflictDraft || !current) return;
+              const next = {
+                ...conflictDraft,
+                ...pendingDraft(current),
+                revision: conflictDraft.revision,
+                lines: current.lines.map((line) => ({
+                  ...line,
+                  confirmed: false,
+                })),
+                delivery_confirmed: false,
+              };
+              setDraft(next);
+              latestDraft.current = next;
+              setDirty(true);
+              setError("");
+              sessionStorage.setItem(
+                recoveryKey,
+                JSON.stringify(pendingDraft(next)),
+              );
+              setConflictDraft(null);
+            }}
+          >
+            Keep my edits for review
+          </button>
+        </div>
       </Modal>
       <Modal
         open={issueOpen}

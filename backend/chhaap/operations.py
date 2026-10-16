@@ -167,6 +167,12 @@ def reports(db):
         "outstanding": outstanding,
         "stages": dict(db.execute(select(Order.stage, func.count()).group_by(Order.stage)).all()),
         "requests": count(RequestRecord),
+        "requests_to_review": db.scalar(
+            select(func.count()).select_from(RequestRecord).where(RequestRecord.status != "ready")
+        ),
+        "active_orders": db.scalar(
+            select(func.count()).select_from(Order).where(Order.stage.not_in(["delivered", "cancelled"]))
+        ),
         "customers": count(Customer),
         "orders": count(Order),
     }

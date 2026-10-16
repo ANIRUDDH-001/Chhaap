@@ -182,6 +182,8 @@ export type Rates = {
   history?: { number: number; created_at: string }[];
 };
 export type Reports = {
+  requests_to_review: number;
+  active_orders: number;
   issued_quote_value: number;
   issued_quotes: number;
   accepted_order_value: number;

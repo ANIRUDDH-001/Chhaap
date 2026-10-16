@@ -112,6 +112,22 @@ def test_manual_price_requires_reason():
         quote(product="manual", manual_price=1000)
 
 
+@pytest.mark.parametrize("multiplier", [0.29, "0.29"])
+def test_decimal_half_up_is_identical_for_numeric_and_string_multipliers(multiplier):
+    from chhaap.catalogue import starter_rates
+    from chhaap.pricing import price_quote
+    from chhaap.schemas import LineSpec
+
+    rates = starter_rates()
+    rates["setup"] = 0
+    rates["cards"]["tiers"] = [[1, 1]]
+    rates["print_multipliers"]["single"] = multiplier
+    result = price_quote(
+        [LineSpec(quantity=50, paper="350", sides="single", finish="none", confirmed=True)], rates
+    )
+    assert result.total == 15
+
+
 def test_flyer_size_and_minimum_charge():
     from chhaap.catalogue import starter_rates
     from chhaap.pricing import price_quote

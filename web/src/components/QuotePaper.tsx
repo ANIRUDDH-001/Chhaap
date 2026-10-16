@@ -1,5 +1,6 @@
 import type { Snapshot, Customer, Quote } from "../lib/types";
 import { money, day } from "../lib/format";
+import { describePrintSpec } from "../lib/print-spec";
 
 export function QuotePaper({
   snapshot,
@@ -48,28 +49,7 @@ export function QuotePaper({
               {line.spec.quantity?.toLocaleString("en-IN")}{" "}
               {line.title.toLowerCase()}
             </h4>
-            <p>
-              {line.spec.product === "banners"
-                ? `${line.spec.width} × ${line.spec.height} ${line.spec.unit}`
-                : [
-                    line.spec.size === "standard"
-                      ? "Standard size"
-                      : line.spec.size,
-                    line.spec.sides === "double"
-                      ? "double-sided"
-                      : "single-sided",
-                    line.spec.colour,
-                  ]
-                    .filter(Boolean)
-                    .join(" · ")}
-              <br />
-              {line.spec.paper
-                ? `${line.spec.paper} GSM`
-                : "Paper needs review"}
-              {line.spec.finish !== "none"
-                ? " · " + line.spec.finish + " finish"
-                : ""}
-            </p>
+            <p>{describePrintSpec(line.spec)}</p>
             {line.components.map((c, j) => (
               <div className="paper-price-row" key={j}>
                 <span>

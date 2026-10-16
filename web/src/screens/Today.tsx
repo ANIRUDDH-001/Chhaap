@@ -22,18 +22,18 @@ export function Today({ onNew }: { onNew: () => void }) {
     queryFn: () => api<Reports>("/reports"),
   });
   const requests = useQuery({
-    queryKey: ["requests"],
-    queryFn: () => api<{ items: RequestRecord[] }>("/requests"),
+    queryKey: ["requests", "queue"],
+    queryFn: () =>
+      api<{ items: RequestRecord[] }>("/requests?queue=true&limit=5"),
   });
   const orders = useQuery({
-    queryKey: ["orders"],
-    queryFn: () => api<{ items: Order[] }>("/orders"),
+    queryKey: ["orders", "queue"],
+    queryFn: () => api<{ items: Order[] }>("/orders?queue=true&limit=3"),
   });
   if (report.isPending) return <Loading />;
   if (report.isError) return <ErrorNote message={report.error.message} />;
   const r = report.data;
-  const pending =
-    requests.data?.items.filter((r) => r.status !== "ready") || [];
+  const pendingCount = r.requests_to_review;
   return (
     <>
       <PageHeading
@@ -70,8 +70,8 @@ export function Today({ onNew }: { onNew: () => void }) {
             More good printing.
           </h2>
           <p>
-            {pending.length
-              ? `${pending.length} request${pending.length > 1 ? "s need" : " needs"} your eye. Start with the details that still need a little clarity.`
+            {pendingCount
+              ? `${pendingCount} request${pendingCount > 1 ? "s need" : " needs"} your eye. Start with the details that still need a little clarity.`
               : "The counter is clear. Bring in a new conversation when the next print job arrives."}
           </p>
           {requests.data?.items[0] ? (
@@ -82,10 +82,13 @@ export function Today({ onNew }: { onNew: () => void }) {
               Open the quote desk
               <ArrowRight size={16} />
             </Link>
+          ) : r.requests ? (
+            <Link className="button" to="/requests">
+              Browse saved requests <ArrowRight size={16} />
+            </Link>
           ) : (
             <button className="button" onClick={onNew}>
-              Create your first request
-              <ArrowRight size={16} />
+              Create your first request <ArrowRight size={16} />
             </button>
           )}
         </section>
@@ -94,7 +97,7 @@ export function Today({ onNew }: { onNew: () => void }) {
           <div>
             <Inbox size={18} />
             <span>Requests to review</span>
-            <b>{pending.length}</b>
+            <b>{pendingCount}</b>
           </div>
           <div>
             <FileCheck2 size={18} />
@@ -104,11 +107,7 @@ export function Today({ onNew }: { onNew: () => void }) {
           <div>
             <Clock3 size={18} />
             <span>Active print jobs</span>
-            <b>
-              {orders.data?.items.filter(
-                (o) => !["delivered", "cancelled"].includes(o.stage),
-              ).length || 0}
-            </b>
+            <b>{r.active_orders}</b>
           </div>
           <div>
             <Coins size={18} />
@@ -171,8 +170,14 @@ export function Today({ onNew }: { onNew: () => void }) {
         </div>
       ) : (
         <Empty
-          title="A clean sheet."
-          description="Create a request to start a conversation-to-quote workflow."
+          title={
+            r.requests ? "No requests waiting for review." : "A clean sheet."
+          }
+          description={
+            r.requests
+              ? "Reviewed requests remain available in your request list."
+              : "Create a request to start a conversation-to-quote workflow."
+          }
           action={
             <button className="button" onClick={onNew}>
               New request
