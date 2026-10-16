@@ -1,11 +1,15 @@
 from uuid import UUID
-from fastapi import FastAPI,Depends,HTTPException,Request,Response
+from fastapi import FastAPI,Depends,HTTPException,Request,Response,UploadFile
+from fastapi.responses import FileResponse
 from pydantic import BaseModel,Field
 from sqlalchemy import select
 
 from . import security
 from .db import shop_session
-from .models import RequestRecord
+from .models import RequestRecord,Source
+from .requests import CreateRequest,PatchRequest,AppendSource,owned,request_data,create_request,patch_request,append_source,invalidate
+from .media import store_image,media_path,MAX_BYTES
+from .catalogue import catalogue
 from .settings import settings
 
 app=FastAPI(title="Chhaap",version="0.1.0")
@@ -71,4 +75,48 @@ def logout(response:Response,identity=Depends(security.get_identity)):
 @app.get('/api/v1/requests')
 def requests(identity=Depends(security.get_identity)):
     with shop_session(identity['shop_id']) as db:
-        return {"items":[{"id":str(r.id),"title":r.title} for r in db.scalars(select(RequestRecord).order_by(RequestRecord.created_at.desc()).limit(100))]}
+        return {"items":[request_data(db,r,False) for r in db.scalars(select(RequestRecord).order_by(RequestRecord.created_at.desc()).limit(100))]}
+
+
+@app.get('/api/v1/catalogue')
+def products(identity=Depends(security.get_identity)):return {"items":catalogue()}
+
+
+@app.post('/api/v1/requests',status_code=201)
+def new_request(body:CreateRequest,identity=Depends(security.get_identity)):
+    with shop_session(identity['shop_id']) as db:return create_request(db,identity['shop_id'],body)
+
+
+@app.get('/api/v1/requests/{record_id}')
+def get_request(record_id:UUID,identity=Depends(security.get_identity)):
+    with shop_session(identity['shop_id']) as db:return request_data(db,owned(db,RequestRecord,record_id))
+
+
+@app.patch('/api/v1/requests/{record_id}')
+def update_request(record_id:UUID,body:PatchRequest,identity=Depends(security.get_identity)):
+    with shop_session(identity['shop_id']) as db:return patch_request(db,owned(db,RequestRecord,record_id,True),body)
+
+
+@app.post('/api/v1/requests/{record_id}/sources',status_code=201)
+def add_source(record_id:UUID,body:AppendSource,identity=Depends(security.get_identity)):
+    with shop_session(identity['shop_id']) as db:return append_source(db,owned(db,RequestRecord,record_id,True),body)
+
+
+@app.post('/api/v1/requests/{record_id}/attachments',status_code=201)
+async def upload_source(record_id:UUID,file:UploadFile,identity=Depends(security.get_identity)):
+    data=await file.read(MAX_BYTES+1)
+    with shop_session(identity['shop_id']) as db:
+        record=owned(db,RequestRecord,record_id,True)
+        sources=list(db.scalars(select(Source).where(Source.request_id==record.id)))
+        if sum(s.kind=='image' for s in sources)>=5:raise HTTPException(422,"A request can include up to five screenshots")
+        key=store_image(identity['shop_id'],data)
+        db.add(Source(shop_id=identity['shop_id'],request_id=record.id,kind='image',sender='Screenshot',media_path=key,mime='image/webp',position=max([s.position for s in sources],default=-1)+1))
+        invalidate(record);db.flush();return request_data(db,record)
+
+
+@app.get('/api/v1/media/{source_id}')
+def get_media(source_id:UUID,identity=Depends(security.get_identity)):
+    with shop_session(identity['shop_id']) as db:
+        source=owned(db,Source,source_id)
+        if not source.media_path:raise HTTPException(404,"This source has no screenshot")
+        return FileResponse(media_path(source.media_path),media_type='image/webp',headers={'Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff'})
