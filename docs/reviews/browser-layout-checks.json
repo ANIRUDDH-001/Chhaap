@@ -1,0 +1,170 @@
+[
+  {
+    "route": "/today",
+    "heading": "A good day starts here.",
+    "scroll": 345,
+    "width": 360
+  },
+  {
+    "route": "/quotes",
+    "heading": "Good work, clearly quoted.",
+    "scroll": 360,
+    "width": 360
+  },
+  {
+    "route": "/jobs",
+    "heading": "From proof to pickup.",
+    "scroll": 345,
+    "width": 360
+  },
+  {
+    "route": "/customers",
+    "heading": "Familiar faces. Fewer questions.",
+    "scroll": 345,
+    "width": 360
+  },
+  {
+    "route": "/rates",
+    "heading": "Your rates. In black and white.",
+    "scroll": 345,
+    "width": 360
+  },
+  {
+    "route": "/reports",
+    "heading": "Know what’s moving.",
+    "scroll": 345,
+    "width": 360
+  },
+  {
+    "route": "/settings",
+    "heading": "Make the counter yours.",
+    "scroll": 345,
+    "width": 360
+  },
+  {
+    "route": "/today",
+    "heading": "A good day starts here.",
+    "scroll": 753,
+    "width": 768
+  },
+  {
+    "route": "/quotes",
+    "heading": "Good work, clearly quoted.",
+    "scroll": 768,
+    "width": 768
+  },
+  {
+    "route": "/jobs",
+    "heading": "From proof to pickup.",
+    "scroll": 768,
+    "width": 768
+  },
+  {
+    "route": "/customers",
+    "heading": "Familiar faces. Fewer questions.",
+    "scroll": 768,
+    "width": 768
+  },
+  {
+    "route": "/rates",
+    "heading": "Your rates. In black and white.",
+    "scroll": 753,
+    "width": 768
+  },
+  {
+    "route": "/reports",
+    "heading": "Know what’s moving.",
+    "scroll": 768,
+    "width": 768
+  },
+  {
+    "route": "/settings",
+    "heading": "Make the counter yours.",
+    "scroll": 753,
+    "width": 768
+  },
+  {
+    "route": "/today",
+    "heading": "A good day starts here.",
+    "scroll": 1009,
+    "width": 1024
+  },
+  {
+    "route": "/quotes",
+    "heading": "Good work, clearly quoted.",
+    "scroll": 1024,
+    "width": 1024
+  },
+  {
+    "route": "/jobs",
+    "heading": "From proof to pickup.",
+    "scroll": 1024,
+    "width": 1024
+  },
+  {
+    "route": "/customers",
+    "heading": "Familiar faces. Fewer questions.",
+    "scroll": 1024,
+    "width": 1024
+  },
+  {
+    "route": "/rates",
+    "heading": "Your rates. In black and white.",
+    "scroll": 1009,
+    "width": 1024
+  },
+  {
+    "route": "/reports",
+    "heading": "Know what’s moving.",
+    "scroll": 1009,
+    "width": 1024
+  },
+  {
+    "route": "/settings",
+    "heading": "Make the counter yours.",
+    "scroll": 1009,
+    "width": 1024
+  },
+  {
+    "route": "/today",
+    "heading": "A good day starts here.",
+    "scroll": 1425,
+    "width": 1440
+  },
+  {
+    "route": "/quotes",
+    "heading": "Good work, clearly quoted.",
+    "scroll": 1440,
+    "width": 1440
+  },
+  {
+    "route": "/jobs",
+    "heading": "From proof to pickup.",
+    "scroll": 1440,
+    "width": 1440
+  },
+  {
+    "route": "/customers",
+    "heading": "Familiar faces. Fewer questions.",
+    "scroll": 1440,
+    "width": 1440
+  },
+  {
+    "route": "/rates",
+    "heading": "Your rates. In black and white.",
+    "scroll": 1425,
+    "width": 1440
+  },
+  {
+    "route": "/reports",
+    "heading": "Know what’s moving.",
+    "scroll": 1440,
+    "width": 1440
+  },
+  {
+    "route": "/settings",
+    "heading": "Make the counter yours.",
+    "scroll": 1425,
+    "width": 1440
+  }
+]

@@ -1,0 +1,188 @@
+{
+  "scope": "Two selected fictional screenshot follow-ups with source-ID constrained schema v2; not a new 60-case benchmark.",
+  "results": [
+    {
+      "case": "screenshot-01",
+      "expected": {
+        "quantity": 250,
+        "paper": "350"
+      },
+      "output": {
+        "lines": [
+          {
+            "product": "cards",
+            "quantity": 250,
+            "paper": "350 GSM",
+            "size": "standard",
+            "sides": "double",
+            "colour": "colour",
+            "finish": "matte",
+            "width": null,
+            "height": null,
+            "unit": "cm",
+            "confirmed": false
+          }
+        ],
+        "evidence": [
+          {
+            "field": "quantity",
+            "value": "250",
+            "source_id": "fictional-screenshot-source",
+            "quote": "250 visiting cards",
+            "line": 0,
+            "verified": false,
+            "source_kind": "image"
+          },
+          {
+            "field": "paper",
+            "value": "350 GSM",
+            "source_id": "fictional-screenshot-source",
+            "quote": "350 GSM paper",
+            "line": 0,
+            "verified": false,
+            "source_kind": "image"
+          },
+          {
+            "field": "size",
+            "value": "Standard size",
+            "source_id": "fictional-screenshot-source",
+            "quote": "Standard size",
+            "line": 0,
+            "verified": false,
+            "source_kind": "image"
+          },
+          {
+            "field": "sides",
+            "value": "both sides",
+            "source_id": "fictional-screenshot-source",
+            "quote": "Colour on both sides",
+            "line": 0,
+            "verified": false,
+            "source_kind": "image"
+          },
+          {
+            "field": "colour",
+            "value": "Colour",
+            "source_id": "fictional-screenshot-source",
+            "quote": "Colour on both sides",
+            "line": 0,
+            "verified": false,
+            "source_kind": "image"
+          },
+          {
+            "field": "finish",
+            "value": "Matte finish",
+            "source_id": "fictional-screenshot-source",
+            "quote": "Matte finish",
+            "line": 0,
+            "verified": false,
+            "source_kind": "image"
+          }
+        ],
+        "missing": [
+          "Delivery date confirmation needed.",
+          "Item 1: review screenshot quantity",
+          "Item 1: review screenshot paper"
+        ],
+        "conflicts": [],
+        "reply": "Delivery date confirm karne ke liye, kripya bataiye.",
+        "language": "Hinglish",
+        "delivery_text": "please confirm date",
+        "transcription": "250 visiting cards\n350 GSM paper\nStandard size\nColour on both sides\nMatte finish\nDelivery: please confirm date",
+        "model": "gemma4:e4b",
+        "duration_seconds": 105.02,
+        "prompt_version": "2",
+        "schema_version": "2"
+      },
+      "correct_fields": 1,
+      "expected_fields": 2
+    },
+    {
+      "case": "screenshot-09",
+      "expected": {
+        "quantity": 1000,
+        "paper": "350"
+      },
+      "output": {
+        "lines": [
+          {
+            "product": "cards",
+            "quantity": 1000,
+            "paper": "350 GSM",
+            "size": "standard",
+            "sides": "double",
+            "colour": "colour",
+            "finish": "matte",
+            "width": null,
+            "height": null,
+            "unit": "cm",
+            "confirmed": false
+          }
+        ],
+        "evidence": [
+          {
+            "field": "quantity",
+            "value": "1000",
+            "source_id": "fictional-screenshot-source",
+            "quote": "1000 visiting cards",
+            "line": 0,
+            "verified": false,
+            "source_kind": "image"
+          },
+          {
+            "field": "paper",
+            "value": "350 GSM",
+            "source_id": "fictional-screenshot-source",
+            "quote": "350 GSM paper",
+            "line": 0,
+            "verified": false,
+            "source_kind": "image"
+          },
+          {
+            "field": "size",
+            "value": "Standard size",
+            "source_id": "fictional-screenshot-source",
+            "quote": "Standard size",
+            "line": 0,
+            "verified": false,
+            "source_kind": "image"
+          },
+          {
+            "field": "sides",
+            "value": "both sides",
+            "source_id": "fictional-screenshot-source",
+            "quote": "Colour on both sides",
+            "line": 0,
+            "verified": false,
+            "source_kind": "image"
+          },
+          {
+            "field": "finish",
+            "value": "Matte finish",
+            "source_id": "fictional-screenshot-source",
+            "quote": "Matte finish",
+            "line": 0,
+            "verified": false,
+            "source_kind": "image"
+          }
+        ],
+        "missing": [
+          "Delivery date confirmation",
+          "Item 1: review screenshot quantity",
+          "Item 1: review screenshot paper"
+        ],
+        "conflicts": [],
+        "reply": "Delivery date confirm karne ke liye, please date bataiye.",
+        "language": "Hinglish",
+        "delivery_text": "please confirm date",
+        "transcription": "1000 visiting cards\n350 GSM paper\nStandard size\nColour on both sides\nMatte finish\nDelivery: please confirm date",
+        "model": "gemma4:e4b",
+        "duration_seconds": 136.64,
+        "prompt_version": "2",
+        "schema_version": "2"
+      },
+      "correct_fields": 1,
+      "expected_fields": 2
+    }
+  ]
+}

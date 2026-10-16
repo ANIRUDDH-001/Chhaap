@@ -4,6 +4,7 @@ param(
     [switch]$SkipSetup
 )
 $ErrorActionPreference = 'Stop'
+Write-Host 'Checking the local Chhaap services...'
 $projectRoot = Split-Path $PSScriptRoot -Parent
 $pythonExe = Join-Path $projectRoot '.venv\Scripts\python.exe'
 $logRoot = Join-Path $projectRoot '.data\logs'
@@ -15,8 +16,10 @@ try {
         & $pythonExe scripts/setup_local.py
         if ($LASTEXITCODE -ne 0) { throw 'Database setup failed' }
     }
+    Write-Host 'Checking database migrations...'
     & $pythonExe -m chhaap.migrate
     if ($LASTEXITCODE -ne 0) { throw 'Database migration failed' }
+    Write-Host 'Checking model, API and background services...'
     function Listening([int]$Port) {
         return [bool](Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue)
     }
@@ -48,14 +51,23 @@ try {
         $nodeExe = (Get-Command node.exe).Source
         Start-HiddenService 'web' $nodeExe @('node_modules/vite/bin/vite.js','--host','127.0.0.1','--port','5175','--strictPort') (Join-Path $projectRoot 'web')
     }
-    $ready = $false
-    foreach ($attempt in 1..20) {
-        try {
-            $response = Invoke-WebRequest 'http://localhost:5175/api/v1/ready' -TimeoutSec 2
-            if ($response.StatusCode -eq 200) { $ready = $true; break }
-        } catch { Start-Sleep -Milliseconds 500 }
-    }
-    if (-not $ready) { throw "Services did not become ready. Inspect $logRoot" }
+    Write-Host 'Checking the live application...'
+    $readyProbe = @'
+import time
+import httpx
+with httpx.Client(trust_env=False, timeout=2) as client:
+    for attempt in range(20):
+        try:
+            result = client.get("http://127.0.0.1:5175/api/v1/ready")
+            if result.status_code == 200 and result.json().get("database") == "ready":
+                raise SystemExit(0)
+        except (httpx.HTTPError, ValueError):
+            pass
+        time.sleep(0.5)
+raise SystemExit(1)
+'@
+    $readyProbe | & $pythonExe -
+    if ($LASTEXITCODE -ne 0) { throw "Services did not become ready. Inspect $logRoot" }
     Write-Host 'Chhaap is live: http://localhost:5175/'
     Write-Host "Services remain running after this command. Logs: $logRoot"
 } finally { Pop-Location }

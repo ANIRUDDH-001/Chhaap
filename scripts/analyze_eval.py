@@ -48,7 +48,10 @@ def main():
             "correct_fields": sum(r["correct"] for r in subset),
             "expected_fields": expected,
             "complete_annotated_field_cases": sum(
-                r["success"] and r["correct"] == r["expected_count"] for r in subset
+                r["success"]
+                and r["correct"] == r["expected_count"]
+                and (r["expected_count"] > 0 or not r.get("output", {}).get("lines"))
+                for r in subset
             ),
             "failures": sum(not r["success"] for r in subset),
             "median_seconds": median(r["seconds"] for r in subset),
@@ -64,8 +67,19 @@ def main():
         for r in text_rows
     )
     expected = sum(r["expected_count"] for r in text_rows)
+    unsupported = [r for r in rows if not cases[r["id"]]["expected"]]
     report = {
         "completed": len(rows),
+        "unsupported_cases": {
+            "cases": len(unsupported),
+            "supported_job_suggested": sum(
+                bool(r.get("output", {}).get("lines")) for r in unsupported
+            ),
+        },
+        "model_text_fields": {
+            "correct": sum(r["correct"] for r in text_rows),
+            "expected": expected,
+        },
         "expected_cases": 60,
         "groups": groups,
         "text_rule_baseline": {
@@ -75,6 +89,7 @@ def main():
             "method": "First literal quantity tied to a product word, first GSM stock, explicit English product keywords. No OCR, model or prices.",
         },
         "notes": [
+            "Unconfirmed suggestions are an application-enforced invariant, not a model obedience score.",
             "Accuracy covers only the independently annotated fields for each case, not every possible specification.",
             "Complete annotated fields does not mean a request is safe to issue; date and all specifications still require human confirmation.",
             "Verified text evidence counts literal span matches; screenshot evidence is deliberately unverified.",
@@ -87,6 +102,16 @@ def main():
         json.dumps(
             {
                 "completed": len(rows),
+                "unsupported_cases": {
+                    "cases": len(unsupported),
+                    "supported_job_suggested": sum(
+                        bool(r.get("output", {}).get("lines")) for r in unsupported
+                    ),
+                },
+                "model_text_fields": {
+                    "correct": sum(r["correct"] for r in text_rows),
+                    "expected": expected,
+                },
                 "groups": list(groups),
                 "baseline": report["text_rule_baseline"],
             }

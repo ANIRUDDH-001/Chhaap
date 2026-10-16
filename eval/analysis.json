@@ -1,0 +1,78 @@
+{
+  "completed": 60,
+  "unsupported_cases": {
+    "cases": 1,
+    "supported_job_suggested": 1
+  },
+  "model_text_fields": {
+    "correct": 115,
+    "expected": 118
+  },
+  "expected_cases": 60,
+  "groups": {
+    "adversarial": {
+      "cases": 5,
+      "correct_fields": 8,
+      "expected_fields": 8,
+      "complete_annotated_field_cases": 4,
+      "failures": 0,
+      "median_seconds": 42.92,
+      "verified_text_evidence": 11,
+      "evidence_count": 15
+    },
+    "clear": {
+      "cases": 20,
+      "correct_fields": 57,
+      "expected_fields": 60,
+      "complete_annotated_field_cases": 17,
+      "failures": 0,
+      "median_seconds": 38.86,
+      "verified_text_evidence": 41,
+      "evidence_count": 111
+    },
+    "conflict": {
+      "cases": 10,
+      "correct_fields": 20,
+      "expected_fields": 20,
+      "complete_annotated_field_cases": 10,
+      "failures": 0,
+      "median_seconds": 49.47,
+      "verified_text_evidence": 20,
+      "evidence_count": 42
+    },
+    "incomplete": {
+      "cases": 15,
+      "correct_fields": 30,
+      "expected_fields": 30,
+      "complete_annotated_field_cases": 15,
+      "failures": 0,
+      "median_seconds": 36.92,
+      "verified_text_evidence": 28,
+      "evidence_count": 43
+    },
+    "screenshot": {
+      "cases": 10,
+      "correct_fields": 2,
+      "expected_fields": 20,
+      "complete_annotated_field_cases": 0,
+      "failures": 0,
+      "median_seconds": 71.86,
+      "verified_text_evidence": 0,
+      "evidence_count": 62
+    }
+  },
+  "text_rule_baseline": {
+    "correct_fields": 103,
+    "expected_fields": 118,
+    "accuracy": 0.8728813559322034,
+    "method": "First literal quantity tied to a product word, first GSM stock, explicit English product keywords. No OCR, model or prices."
+  },
+  "notes": [
+    "Unconfirmed suggestions are an application-enforced invariant, not a model obedience score.",
+    "Accuracy covers only the independently annotated fields for each case, not every possible specification.",
+    "Complete annotated fields does not mean a request is safe to issue; date and all specifications still require human confirmation.",
+    "Verified text evidence counts literal span matches; screenshot evidence is deliberately unverified.",
+    "Rendered English screenshot inputs with blur do not represent real-user screenshot diversity.",
+    "No real-user corrections, production throughput SLA, or peak-memory claim can be derived from this corpus."
+  ]
+}

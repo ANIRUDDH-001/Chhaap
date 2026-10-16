@@ -1,0 +1,6 @@
+{
+  "cpu": "AMD Ryzen 7 5800HS with Radeon Graphics        ",
+  "total_physical_memory_bytes": 16539385856,
+  "runtime": "Windows, Python 3.11.9, local Ollama, one inference slot",
+  "memory_note": "Peak model memory was not sampled during the corpus; total system RAM is reported only."
+}

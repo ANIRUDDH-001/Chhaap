@@ -1,0 +1,15 @@
+{
+  "completed": 60,
+  "total_cases": 60,
+  "correct_fields": 117,
+  "expected_fields": 138,
+  "field_accuracy": 0.8478,
+  "missing_detection": 1.0,
+  "conflict_detection": 0.1,
+  "model_failures": 0,
+  "all_outputs_unconfirmed": true,
+  "median_seconds": 42.96,
+  "max_seconds": 144.53,
+  "model": "gemma4:e4b",
+  "scope": "Fictional cases only; this is not a real-user study."
+}

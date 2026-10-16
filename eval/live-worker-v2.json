@@ -1,0 +1,103 @@
+{
+  "scope": "Fictional request created and queued through the actual browser; processed by the separate local worker.",
+  "status": "completed",
+  "attempts": 1,
+  "error": null,
+  "extraction": {
+    "lines": [
+      {
+        "size": "standard",
+        "unit": "in",
+        "paper": "350",
+        "sides": "double",
+        "width": null,
+        "colour": "colour",
+        "finish": "matte",
+        "height": null,
+        "product": "cards",
+        "quantity": 500,
+        "confirmed": false
+      }
+    ],
+    "model": "gemma4:e4b",
+    "reply": "Delivery date kab confirm hoga?",
+    "missing": [
+      "Delivery date"
+    ],
+    "evidence": [
+      {
+        "line": 0,
+        "field": "quantity",
+        "quote": "500 visiting cards",
+        "value": "500",
+        "verified": true,
+        "source_id": "489a384e-5650-4b10-9032-cc60d0f71b07",
+        "source_kind": "text"
+      },
+      {
+        "line": 0,
+        "field": "paper",
+        "quote": "on 350 GSM paper",
+        "value": "350",
+        "verified": true,
+        "source_id": "489a384e-5650-4b10-9032-cc60d0f71b07",
+        "source_kind": "text"
+      },
+      {
+        "line": 0,
+        "field": "size",
+        "quote": "standard size",
+        "value": "standard",
+        "verified": true,
+        "source_id": "489a384e-5650-4b10-9032-cc60d0f71b07",
+        "source_kind": "text"
+      },
+      {
+        "line": 0,
+        "field": "quantity",
+        "quote": "500 visiting cards",
+        "value": "500",
+        "origin": "literal-verification",
+        "verified": true,
+        "source_id": "489a384e-5650-4b10-9032-cc60d0f71b07",
+        "source_kind": "text"
+      },
+      {
+        "line": 0,
+        "field": "paper",
+        "quote": "350 GSM",
+        "value": "350",
+        "origin": "literal-verification",
+        "verified": true,
+        "source_id": "489a384e-5650-4b10-9032-cc60d0f71b07",
+        "source_kind": "text"
+      }
+    ],
+    "language": "Hindi",
+    "conflicts": [],
+    "delivery_text": "Delivery date will be confirmed separately.",
+    "transcription": "500 visiting cards on 350 GSM paper, standard size, colour on both sides, matte finish. Delivery date will be confirmed separately.",
+    "prompt_version": "2",
+    "schema_version": "2",
+    "duration_seconds": 80.5
+  },
+  "draft_lines": [
+    {
+      "size": "standard",
+      "unit": "ft",
+      "paper": null,
+      "sides": "double",
+      "width": null,
+      "colour": "colour",
+      "finish": "matte",
+      "height": null,
+      "product": "cards",
+      "quantity": 500,
+      "confirmed": false,
+      "description": "",
+      "manual_price": null,
+      "manual_reason": ""
+    }
+  ],
+  "delivery_confirmed": false
+}

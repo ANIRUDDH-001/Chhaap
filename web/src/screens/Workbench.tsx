@@ -590,6 +590,7 @@ export function Workbench({ onNew }: { onNew: () => void }) {
                   : "Model offline · manual entry works"}
             </span>
           </div>
+          <p className="form-help">Experimental suggestions. Check quantities, stock, corrections and screenshots yourself.</p>
           {job?.status === "failed" && (
             <div className="warning-note">
               <TriangleAlert size={15} />
