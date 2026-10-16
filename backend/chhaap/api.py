@@ -13,6 +13,8 @@ from .catalogue import catalogue
 from .settings import settings
 
 app=FastAPI(title="Chhaap",version="0.1.0")
+from .business_api import router as business_router
+app.include_router(business_router)
 
 
 @app.middleware("http")
