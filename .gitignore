@@ -1,0 +1,15 @@
+.env
+.venv/
+.data/
+.superpowers/
+**/__pycache__/
+**/.pytest_cache/
+**/.ruff_cache/
+**/*.egg-info/
+**/node_modules/
+**/dist/
+**/coverage/
+*.log
+*.tsbuildinfo
+backend/.coverage
+
