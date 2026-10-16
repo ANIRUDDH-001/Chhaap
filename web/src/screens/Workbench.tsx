@@ -26,7 +26,7 @@ import {
   TriangleAlert,
 } from "lucide-react";
 import { api, post, patch, key, errorMessage } from "../lib/api";
-import { issueBlockers, reconcileSavedDraft } from "../lib/draft";
+import { issueBlockers, reconcileSavedDraft, pendingDraft } from "../lib/draft";
 import { initials } from "../lib/format";
 import { blankLine } from "../lib/types";
 import type { RequestRecord, LineSpec, Snapshot, Quote } from "../lib/types";
@@ -41,6 +41,7 @@ import {
   useToast,
 } from "../components/ui";
 import { QuotePaper } from "../components/QuotePaper";
+import { QuoteAdjustments } from "../components/QuoteAdjustments";
 
 export function Workbench({ onNew }: { onNew: () => void }) {
   const { id } = useParams();
@@ -72,16 +73,38 @@ export function Workbench({ onNew }: { onNew: () => void }) {
   const [highlight, setHighlight] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
   const issueKey = useRef(key());
+  const initialized = useRef(false);
+  const recoveryKey = `chhaap-draft:${session.shop.id}:${id}`;
   useEffect(() => {
-    if (record.data && !dirty && !saving) setDraft(record.data);
+    if (record.data && !dirty && !saving) {
+      if (!initialized.current) {
+        initialized.current = true;
+        try {
+          const cached = sessionStorage.getItem(recoveryKey);
+          if (cached) {
+            setDraft({ ...record.data, ...JSON.parse(cached) });
+            setDirty(true);
+            setSavedLabel("Recovered unsaved edits");
+            return;
+          }
+        } catch {
+          /* A restricted browser can still use server autosave. */
+        }
+      }
+      setDraft(record.data);
+    }
   }, [record.data, dirty, saving]);
   const current = draft;
   const latestDraft = useRef(draft);
   latestDraft.current = draft;
   const saveInFlight = useRef(false);
   const preview = useQuery({
-    queryKey: ["price", current?.lines],
-    queryFn: () => post<Snapshot>("/quotes/preview", { lines: current!.lines }),
+    queryKey: ["price", current?.lines, current?.adjustments],
+    queryFn: () =>
+      post<Snapshot>("/quotes/preview", {
+        lines: current!.lines,
+        adjustments: current!.adjustments,
+      }),
     enabled:
       !!current &&
       current.lines.every(
@@ -96,7 +119,16 @@ export function Workbench({ onNew }: { onNew: () => void }) {
     staleTime: 60000,
   });
   function edit(change: Partial<RequestRecord>) {
-    setDraft((d) => (d ? { ...d, ...change } : d));
+    setDraft((d) => {
+      if (!d) return d;
+      const next = { ...d, ...change };
+      try {
+        sessionStorage.setItem(recoveryKey, JSON.stringify(pendingDraft(next)));
+      } catch {
+        /* Autosave stays available. */
+      }
+      return next;
+    });
     setDirty(true);
     setSavedLabel("Unsaved changes");
     setError("");
@@ -125,6 +157,7 @@ export function Workbench({ onNew }: { onNew: () => void }) {
         delivery_date: current.delivery_date || null,
         delivery_confirmed: current.delivery_confirmed,
         notes: current.notes,
+        adjustments: current.adjustments,
       });
       const result = reconcileSavedDraft(
         latestDraft.current || current,
@@ -134,6 +167,16 @@ export function Workbench({ onNew }: { onNew: () => void }) {
       latestDraft.current = result.draft;
       setDraft(result.draft);
       setDirty(result.dirty);
+      try {
+        if (result.dirty)
+          sessionStorage.setItem(
+            recoveryKey,
+            JSON.stringify(pendingDraft(result.draft)),
+          );
+        else sessionStorage.removeItem(recoveryKey);
+      } catch {
+        /* The saved server record is authoritative. */
+      }
       setSavedLabel(
         result.dirty ? "New edits waiting to save" : "Saved to your shop",
       );
@@ -246,6 +289,7 @@ export function Workbench({ onNew }: { onNew: () => void }) {
         <ErrorNote
           message={error}
           retry={() => {
+            sessionStorage.removeItem(recoveryKey);
             setDirty(false);
             record.refetch();
           }}
@@ -829,6 +873,10 @@ export function Workbench({ onNew }: { onNew: () => void }) {
             <Plus size={14} />
             Add another item
           </button>
+          <QuoteAdjustments
+            value={current.adjustments || {}}
+            onChange={(adjustments) => edit({ adjustments })}
+          />
           <div className="delivery-section">
             <label className="field">
               Requested delivery date

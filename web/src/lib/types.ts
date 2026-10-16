@@ -57,6 +57,7 @@ export type RequestRecord = {
   customer: Customer | null;
   status: string;
   lines: LineSpec[];
+  adjustments: QuoteAdjustments;
   delivery_date: string | null;
   delivery_confirmed: boolean;
   notes: string;
@@ -67,6 +68,8 @@ export type RequestRecord = {
 };
 export type Component = { label: string; amount: number; detail?: string };
 export type Snapshot = {
+  shop_name?: string;
+  customer?: Customer;
   currency: string;
   rate_version: string;
   lines: {
@@ -81,6 +84,15 @@ export type Snapshot = {
   deposit: number;
   ready: boolean;
   warnings: string[];
+};
+export type QuoteAdjustments = {
+  rush?: number;
+  delivery?: number;
+  design?: number;
+  discount?: number;
+  reason?: string;
+  tax_percent?: string | null;
+  deposit_percent?: string | null;
 };
 export type Quote = {
   id: string;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   NavLink,
@@ -29,12 +29,33 @@ import { SessionContext } from "./lib/session";
 import { initials } from "./lib/format";
 import { Loading, ErrorNote, Modal } from "./components/ui";
 import { NewRequestForm } from "./components/NewRequestForm";
-import { Workbench } from "./screens/Workbench";
-import { Today, RequestList } from "./screens/Today";
-import { Quotes } from "./screens/Quotes";
-import { Jobs } from "./screens/Jobs";
-import { Customers } from "./screens/Customers";
-import { Rates, Reports, Settings } from "./screens/Management";
+const Workbench = lazy(() =>
+  import("./screens/Workbench").then((m) => ({ default: m.Workbench })),
+);
+const Today = lazy(() =>
+  import("./screens/Today").then((m) => ({ default: m.Today })),
+);
+const RequestList = lazy(() =>
+  import("./screens/Today").then((m) => ({ default: m.RequestList })),
+);
+const Quotes = lazy(() =>
+  import("./screens/Quotes").then((m) => ({ default: m.Quotes })),
+);
+const Jobs = lazy(() =>
+  import("./screens/Jobs").then((m) => ({ default: m.Jobs })),
+);
+const Customers = lazy(() =>
+  import("./screens/Customers").then((m) => ({ default: m.Customers })),
+);
+const Rates = lazy(() =>
+  import("./screens/Management").then((m) => ({ default: m.Rates })),
+);
+const Reports = lazy(() =>
+  import("./screens/Management").then((m) => ({ default: m.Reports })),
+);
+const Settings = lazy(() =>
+  import("./screens/Management").then((m) => ({ default: m.Settings })),
+);
 
 const nav = [
   { path: "/today", name: "Today", icon: LayoutGrid },
@@ -236,31 +257,38 @@ export function App() {
             </div>
           </header>
           <main className="page-content" id="main">
-            <Routes>
-              <Route path="/" element={<Start />} />
-              <Route
-                path="/today"
-                element={<Today onNew={() => setNewOpen(true)} />}
-              />
-              <Route
-                path="/requests"
-                element={<RequestList onNew={() => setNewOpen(true)} />}
-              />
-              <Route
-                path="/requests/:id"
-                element={<Workbench onNew={() => setNewOpen(true)} />}
-              />
-              <Route path="/quotes" element={<Quotes />} />
-              <Route path="/jobs" element={<Jobs />} />
-              <Route path="/customers" element={<Customers />} />
-              <Route path="/rates" element={<Rates />} />
-              <Route path="/reports" element={<Reports />} />
-              <Route
-                path="/settings"
-                element={<Settings theme={theme} setTheme={setTheme} />}
-              />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
+            <Suspense fallback={<Loading />}>
+              <Routes>
+                <Route path="/" element={<Start />} />
+                <Route
+                  path="/today"
+                  element={<Today onNew={() => setNewOpen(true)} />}
+                />
+                <Route
+                  path="/requests"
+                  element={<RequestList onNew={() => setNewOpen(true)} />}
+                />
+                <Route
+                  path="/requests/:id"
+                  element={
+                    <Workbench
+                      key={location.pathname}
+                      onNew={() => setNewOpen(true)}
+                    />
+                  }
+                />
+                <Route path="/quotes" element={<Quotes />} />
+                <Route path="/jobs" element={<Jobs />} />
+                <Route path="/customers" element={<Customers />} />
+                <Route path="/rates" element={<Rates />} />
+                <Route path="/reports" element={<Reports />} />
+                <Route
+                  path="/settings"
+                  element={<Settings theme={theme} setTheme={setTheme} />}
+                />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </Suspense>
           </main>
           <footer className="app-footer">
             <span>

@@ -1,12 +1,13 @@
 """A narrow privileged queue claim, returning only one job descriptor."""
+
 from alembic import op
 
-revision='0002'
-down_revision='0001'
+revision = "0002"
+down_revision = "0001"
 
 
 def upgrade():
-    op.execute('''CREATE FUNCTION public.claim_chhaap_job(worker text)
+    op.execute("""CREATE FUNCTION public.claim_chhaap_job(worker text)
 RETURNS TABLE(job_id uuid, tenant_id uuid) LANGUAGE plpgsql SECURITY DEFINER
 SET search_path = pg_catalog, public AS $$
 DECLARE picked uuid;
@@ -22,9 +23,10 @@ BEGIN
   RETURN QUERY UPDATE public.background_jobs SET status='running',attempts=attempts+1,lease_owner=worker,lease_until=now()+interval '240 seconds'
   WHERE id=picked RETURNING id,shop_id;
  END IF;
-END $$''')
-    op.execute('REVOKE ALL ON FUNCTION public.claim_chhaap_job(text) FROM PUBLIC')
-    op.execute('GRANT EXECUTE ON FUNCTION public.claim_chhaap_job(text) TO chhaap_app')
+END $$""")
+    op.execute("REVOKE ALL ON FUNCTION public.claim_chhaap_job(text) FROM PUBLIC")
+    op.execute("GRANT EXECUTE ON FUNCTION public.claim_chhaap_job(text) TO chhaap_app")
 
 
-def downgrade():op.execute('DROP FUNCTION public.claim_chhaap_job(text)')
+def downgrade():
+    op.execute("DROP FUNCTION public.claim_chhaap_job(text)")

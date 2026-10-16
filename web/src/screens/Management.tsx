@@ -692,6 +692,27 @@ export function Settings({
             <Download size={15} />
             Export shop records
           </button>
+          <button
+            className="button"
+            disabled={busy}
+            onClick={async () => {
+              setBusy(true);
+              try {
+                const result = await post<{ removed_sources: number }>(
+                  "/settings/cleanup",
+                );
+                notify(
+                  `Removed ${result.removed_sources} expired source messages and screenshots. Business records are kept.`,
+                );
+              } catch (e) {
+                notify(errorMessage(e));
+              } finally {
+                setBusy(false);
+              }
+            }}
+          >
+            Clean up expired sources
+          </button>
         </section>
         <section className="settings-panel">
           <h2>
@@ -711,6 +732,18 @@ export function Settings({
                 ". Your shop data is stored separately from other workspaces."}
           </p>
           <div className="button-row">
+            {session.shop.mode === "private" && (
+              <button
+                className="button"
+                onClick={async () => {
+                  await post("/auth/logout");
+                  sessionStorage.clear();
+                  window.location.assign("/");
+                }}
+              >
+                Sign out
+              </button>
+            )}
             <button
               className="button"
               onClick={() => {

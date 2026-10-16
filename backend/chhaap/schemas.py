@@ -32,9 +32,15 @@ class Adjustments(BaseModel):
     delivery: int = Field(default=0, ge=0, le=10000000)
     design: int = Field(default=0, ge=0, le=10000000)
     discount: int = Field(default=0, ge=0, le=10000000)
-    tax_percent: Decimal = Field(default=Decimal(0), ge=0, le=100)
-    deposit_percent: Decimal = Field(default=Decimal(50), ge=0, le=100)
+    tax_percent: Decimal | None = Field(default=None, ge=0, le=100)
+    deposit_percent: Decimal | None = Field(default=None, ge=0, le=100)
     reason: str = Field(default="", max_length=500)
+
+    @model_validator(mode="after")
+    def changes_need_reason(self):
+        if any((self.rush, self.delivery, self.design, self.discount)) and not self.reason.strip():
+            raise ValueError("Custom charges and discounts require an owner reason")
+        return self
 
 
 class PriceComponent(BaseModel):
@@ -60,4 +66,3 @@ class PriceSnapshot(BaseModel):
     deposit: int
     ready: bool
     warnings: list[str]
-

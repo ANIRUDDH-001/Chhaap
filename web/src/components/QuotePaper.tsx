@@ -14,10 +14,11 @@ export function QuotePaper({
   quote?: Quote;
   deliveryDate?: string | null;
 }) {
+  const recipient = quote ? snapshot?.customer || customer : customer;
   return (
     <article className="quote-paper" aria-label="Quotation preview">
       <div className="paper-brand">
-        {shopName}
+        {quote ? snapshot?.shop_name || shopName : shopName}
         <small>Thoughtful printing, around the corner.</small>
       </div>
       <div className="paper-heading">
@@ -36,8 +37,8 @@ export function QuotePaper({
       <div className="paper-recipient">
         Prepared for
         <strong>
-          {customer?.name || "Choose a customer"}
-          {customer?.business ? " · " + customer.business : ""}
+          {recipient?.name || "Choose a customer"}
+          {recipient?.business ? " · " + recipient.business : ""}
         </strong>
       </div>
       {snapshot ? (

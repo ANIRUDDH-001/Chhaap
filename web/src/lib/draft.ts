@@ -12,6 +12,32 @@ type ReviewDraft = {
   delivery_date: string | null;
   delivery_confirmed: boolean;
 };
+type EditableDraft = ReviewDraft & {
+  revision: number;
+  title: string;
+  notes: string;
+  adjustments: object;
+};
+export function pendingDraft(draft: EditableDraft) {
+  const {
+    revision,
+    title,
+    notes,
+    adjustments,
+    lines,
+    delivery_date,
+    delivery_confirmed,
+  } = draft;
+  return {
+    revision,
+    title,
+    notes,
+    adjustments,
+    lines,
+    delivery_date,
+    delivery_confirmed,
+  };
+}
 export function reconcileSavedDraft<T extends { revision: number }>(
   current: T,
   sent: T,
