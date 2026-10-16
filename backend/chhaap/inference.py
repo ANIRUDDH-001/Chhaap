@@ -1,6 +1,7 @@
 """Untrusted language interpretation, isolated from commercial actions."""
 import base64
 import json
+import re
 import time
 from typing import Literal
 
@@ -54,10 +55,25 @@ def validate_extraction(raw:dict,sources:list[dict])->dict:
         if line['product'] not in {'cards','flyers','banners'}:
             data['missing'].append('Unsupported product: enter a custom owner-priced job');continue
         line['confirmed']=False
+        # Independent literal checks can supply evidence, but never confirmation.
+        for field in ['quantity','paper']:
+            value=line.get(field)
+            if value is None:continue
+            if field=='quantity':
+                number=f'(?:{re.escape(str(value))}|{re.escape(format(int(value),","))})'
+                product={'cards':r'(?:(?:visiting|business)\s+)?(?:cards?|कार्ड)','flyers':r'(?:flyers?|leaflets?|pamphlets?|पर्चे)','banners':r'(?:banners?|बैनर)'}[line['product']]
+                pattern=rf'(?<![\d.,]){number}\s*{product}\b'
+            else:pattern=rf'(?<!\d){re.escape(str(value))}\s*(?:gsm|जीएसएम)\b'
+            for source in sources:
+                if source['kind']!='text':continue
+                match=re.search(pattern,source.get('text',''),re.IGNORECASE)
+                if match:
+                    data['evidence'].append({'field':field,'value':str(value),'source_id':str(source['id']),'quote':match.group(),'line':i,'verified':True,'source_kind':'text','origin':'literal-verification'})
+                    break
         for field in ['quantity','paper','width','height']:
             value=line.get(field)
             if value is None:continue
-            support=[e for e in data['evidence'] if e['field']==field and e.get('line',0)==i and str(value).replace('.0','') in e['quote']]
+            support=[e for e in data['evidence'] if e['field']==field and e.get('line',0)==i and str(value).replace('.0','') in e['quote'].replace(',','')]
             if not support:
                 line[field]=None;data['missing'].append(f'Item {i+1}: verify {field} against the original request')
             elif not any(e['verified'] for e in support):
@@ -84,9 +100,14 @@ class OllamaProvider:
             messages.append(message)
         messages.append({'role':'user','content':'Extract the print job. Use null for unknown facts. Catalogue: '+json.dumps(catalogue)})
         start=time.monotonic()
+        schema=Extraction.model_json_schema()
+        for definition in [schema,*schema.get('$defs',{}).values()]:
+            if 'properties' in definition:
+                definition['required']=list(definition['properties'])
+                for prop in definition['properties'].values():prop.pop('default',None)
         with httpx.Client(timeout=settings.inference_timeout) as client:
             for repair in range(2):
-                response=client.post(settings.ollama_url+'/api/chat',json={'model':settings.ollama_model,'messages':messages,'format':Extraction.model_json_schema(),'stream':False,'think':False,'keep_alive':'5m','options':{'temperature':0,'num_ctx':4096,'num_predict':1200}})
+                response=client.post(settings.ollama_url+'/api/chat',json={'model':settings.ollama_model,'messages':messages,'format':schema,'stream':False,'think':False,'keep_alive':'5m','options':{'temperature':0,'num_ctx':4096,'num_predict':1200}})
                 response.raise_for_status();payload=response.json()
                 try:result=validate_extraction(json.loads(payload['message']['content']),sources);break
                 except (ValueError,ValidationError,KeyError):

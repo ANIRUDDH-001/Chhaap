@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from .settings import settings
 
-engine=create_engine(settings.database_url,pool_pre_ping=True,pool_size=5,max_overflow=5)
+engine=create_engine(settings.database_url,pool_pre_ping=True,pool_size=5,max_overflow=5,connect_args={"options":"-c timezone=UTC"})
 
 
 @contextmanager

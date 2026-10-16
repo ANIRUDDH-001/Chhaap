@@ -1,0 +1,91 @@
+{
+  "model": "gemma4:e4b",
+  "sources": [
+    {
+      "id": "source-1",
+      "kind": "text",
+      "sender": "Riya",
+      "text": "500 visiting cards, standard size, 350 GSM paper, both sides colour, matte finish. Delivery Monday."
+    }
+  ],
+  "output": {
+    "lines": [
+      {
+        "product": "cards",
+        "quantity": 500,
+        "paper": "350",
+        "size": "standard",
+        "sides": "double",
+        "colour": "colour",
+        "finish": "matte",
+        "width": null,
+        "height": null,
+        "unit": "in",
+        "confirmed": false
+      }
+    ],
+    "evidence": [
+      {
+        "field": "quantity",
+        "value": "500",
+        "source_id": "source-1",
+        "quote": "500",
+        "line": 0,
+        "verified": true,
+        "source_kind": "text"
+      },
+      {
+        "field": "paper",
+        "value": "350",
+        "source_id": "source-1",
+        "quote": "350 GSM paper",
+        "line": 0,
+        "verified": true,
+        "source_kind": "text"
+      },
+      {
+        "field": "size",
+        "value": "standard",
+        "source_id": "source-1",
+        "quote": "standard size",
+        "line": 0,
+        "verified": true,
+        "source_kind": "text"
+      },
+      {
+        "field": "quantity",
+        "value": "500",
+        "source_id": "source-1",
+        "quote": "500 visiting cards",
+        "line": 0,
+        "verified": true,
+        "source_kind": "text",
+        "origin": "literal-verification"
+      },
+      {
+        "field": "paper",
+        "value": "350",
+        "source_id": "source-1",
+        "quote": "350 GSM",
+        "line": 0,
+        "verified": true,
+        "source_kind": "text",
+        "origin": "literal-verification"
+      }
+    ],
+    "missing": [
+      "Delivery date"
+    ],
+    "conflicts": [],
+    "reply": "Delivery date kya hai?",
+    "language": "Hindi",
+    "delivery_text": "Monday",
+    "transcription": "500 visiting cards, standard size, 350 GSM paper, both sides colour, matte finish. Delivery Monday.",
+    "model": "gemma4:e4b",
+    "duration_seconds": 23.86,
+    "prompt_version": "1",
+    "schema_version": "1"
+  },
+  "success": true,
+  "elapsed_seconds": 23.86
+}

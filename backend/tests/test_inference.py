@@ -24,3 +24,19 @@ def test_screenshot_evidence_remains_unverified():
     assert result['evidence'][0]['verified'] is False
     assert result['lines'][0]['confirmed'] is False
 
+
+def test_literal_quantity_and_gsm_can_be_checked_when_model_omits_evidence():
+    from chhaap.inference import validate_extraction
+    raw={'lines':[{'product':'cards','quantity':500,'paper':'350','finish':'matte'}],'evidence':[],'missing':[],'conflicts':[],'reply':'','language':'English'}
+    result=validate_extraction(raw,[{'id':'s1','kind':'text','text':'500 visiting cards on 350 GSM paper with matte finish'}])
+    assert result['lines'][0]['quantity']==500
+    assert result['lines'][0]['paper']=='350'
+    assert all(e['verified'] for e in result['evidence'])
+    assert result['lines'][0]['confirmed'] is False
+
+
+def test_price_numbers_are_not_treated_as_quantity_evidence():
+    from chhaap.inference import validate_extraction
+    result=validate_extraction({'lines':[{'product':'cards','quantity':500,'paper':None}],'evidence':[]},[{'id':'s1','kind':'text','text':'Need cards, budget is 500 rupees'}])
+    assert result['lines'][0]['quantity'] is None
+
